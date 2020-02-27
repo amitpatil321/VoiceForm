@@ -1,0 +1,62 @@
+{
+    "fields": [
+        {
+            "name": "first_name",
+            "placeholder": "First Name",
+            "type": "input",
+            "triggers": [
+                "first name"
+            ]
+        },
+        {
+            "name": "last_name",
+            "placeholder": "Last Name",
+            "type": "input",
+            "triggers": [
+                "last name",
+                "surname"
+            ]
+        },
+        {
+            "name": "email",
+            "placeholder": "Email",
+            "type": "input",
+            "triggers": [
+                "email"
+            ]
+        },
+        {
+            "name": "company",
+            "placeholder": "Company Name",
+            "type": "input",
+            "triggers": [
+                "company",
+                "employer",
+                "organisation"
+            ]
+        },
+        {
+            "name": "age",
+            "placeholder": "Age",
+            "type": "select",
+            "childs": [
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30
+            ],
+            "triggers": [
+                "age"
+            ]
+        }
+    ]
+}
