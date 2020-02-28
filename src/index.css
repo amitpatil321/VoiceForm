@@ -1,13 +1,82 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Poppins" !important;
+  background-image: -webkit-radial-gradient(
+      80% 10%,
+      circle,
+      rgb(27, 186, 135),
+      transparent
+    ),
+    -webkit-radial-gradient(80% 50%, circle, rgb(58, 164, 178), transparent),
+    -webkit-radial-gradient(20% 80%, 40em 40em, rgb(14, 4, 56), transparent),
+    -webkit-radial-gradient(10% 10%, circle, rgb(68, 242, 215), transparent);
+}
+.form {
+  background: #fff;
+  padding: 30px !important;
+  margin: 20px !important;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+}
+.center {
+  text-align: center;
+}
+.recordingIcon {
+  /* float: right; */
+  font-size: 20px;
+}
+.on {
+  color: #8080ff !important;
+}
+.off {
+  color: #f85e5e !important;
+}
+body {
+  background-color: #47d1da;
+}
+p {
+  color: white;
+  font: 300 4em/150% Impact;
+  text-align: center;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.show {
+  visibility: visible;
+}
+.hide {
+  visibility: hidden;
+}
+
+#recordingAnimation span {
+  display: inline-block !important;
+  background-color: #ccc;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  margin-right: 7px;
+
+  animation-name: blink;
+  animation-duration: 0.8s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+#recordingAnimation span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+#recordingAnimation span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+#recordingAnimation span:nth-child(4) {
+  animation-delay: 0.3s;
+}
+@keyframes blink {
+  0% {
+    background-color: rgba(195, 205, 213, 0.2);
+  }
+  20% {
+    background-color: rgba(90, 178, 239, 1);
+    transform: scale(1.2);
+  }
+  100% {
+    background-color: rgba(195, 205, 213, 0.2);
+  }
 }
