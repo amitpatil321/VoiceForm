@@ -1,9 +1,10 @@
 import { hot } from "react-hot-loader/root";
 import React, { Component } from "react";
-import { Button, Row, Col, Form, Input, Modal } from "antd";
+import { Button, Row, Col, Form, Input, Modal, Divider } from "antd";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
+import "./App.css";
 import "antd/dist/antd.css";
 
 const SpeechRecognition =
@@ -15,10 +16,10 @@ recorder.interimResults = true;
 recorder.lang = "en-US";
 
 /* TODO :
-1) Add action to clear form
-2) Clear perticular field only
-3) Append new string with existing input text
-4) Add undo feature
+1) Add action to clear form - DONE
+2) Clear perticular field only - DONE
+3) Append new string with existing input text - DONE
+4) Add undo feature - DONE
 5) keybord delete button isnt working
  */
 
@@ -27,20 +28,26 @@ class App extends Component {
     activeInput: null,
     isRecording: false,
     forceStopped: false,
-    formData: []
+    formData: [],
+    inputHistory: [],
+    showModal: false
   };
 
   componentDidMount() {
     let inputs = {};
+    let inputHistory = {};
     fields.forEach(each => {
       inputs[each.name] = "";
+      inputHistory[each.name] = "";
     });
-    this.setState({ formData: inputs });
+    this.setState({ formData: inputs, inputHistory }, () =>
+      console.log(this.state)
+    );
   }
 
   _proccessCommand = recordedString => {
     console.log("Recorded String :" + recordedString);
-    let { activeInput, formData } = this.state;
+    let { activeInput, formData, inputHistory } = this.state;
     // check if command matched with any other custom command
     switch (recordedString) {
       // Appends space at the end of input
@@ -48,7 +55,14 @@ class App extends Component {
         if (activeInput) {
           const currValue = this.refs[activeInput].props.value + " ";
           formData[activeInput] = currValue;
-          this.setState({ ...formData });
+          this.setState(prevState => ({
+            ...formData,
+            activeInput: activeInput,
+            inputHistory: {
+              ...prevState.inputHistory,
+              [activeInput]: [...prevState.inputHistory[activeInput], " "]
+            }
+          }));
         }
         break;
       case "clear":
@@ -64,15 +78,31 @@ class App extends Component {
       case "reset form":
       case "clear form":
         let clearFields = {};
-        fields.map(each => {
+        fields.forEach(each => {
           clearFields[each.name] = "";
         });
         this.setState({ formData: clearFields });
         break;
+      case "undo":
+        // Remove last string that was added to active input
+        if (activeInput) {
+          let currText = formData[activeInput];
+          if (this.refs[activeInput].props.value) {
+            currText = currText.replace(
+              inputHistory[activeInput][inputHistory[activeInput].length - 1],
+              ""
+            );
+            formData[activeInput] = currText;
+            // set updated input
+            this.setState({ ...formData });
+            // remove that word from history as well.
+            inputHistory[activeInput].pop();
+          }
+        }
+        break;
       case "go":
       case "submit":
       case "submit form":
-        console.log("Submitting form!");
         this._handleSubmit();
         break;
       case "stop recording":
@@ -91,9 +121,19 @@ class App extends Component {
           if (activeInput) {
             const existingValue = this.refs[activeInput].props.value;
             formData[activeInput] =
-              (existingValue ? existingValue : "") + recordedString;
-
-            this.setState({ ...formData, activeInput: activeInput });
+              (existingValue ? existingValue : "") + recordedString + " ";
+            // console.log(this.state);
+            this.setState(prevState => ({
+              ...formData,
+              activeInput: activeInput,
+              inputHistory: {
+                ...prevState.inputHistory,
+                [activeInput]: [
+                  ...prevState.inputHistory[activeInput],
+                  recordedString
+                ]
+              }
+            }));
           }
         }
       }
@@ -133,8 +173,7 @@ class App extends Component {
 
   // Handle submit button
   _handleSubmit = e => {
-    const { formData } = this.state;
-    console.log(formData);
+    this.setState({ showModal: true });
   };
 
   _handleChange = e => {
@@ -145,7 +184,7 @@ class App extends Component {
   };
 
   render() {
-    let { isRecording, formData } = this.state;
+    let { isRecording, formData, showModal } = this.state;
     return (
       <Row>
         <Col span={24}>
@@ -179,7 +218,7 @@ class App extends Component {
                 </Col>
               </Row>
               {/* <br /> */}
-              <Form onSubmit={this._handleSubmit} ref={this._refLoginForm}>
+              <Form ref={this._refLoginForm}>
                 {fields.map((each, index) => {
                   return (
                     <Form.Item key={index}>
@@ -193,29 +232,43 @@ class App extends Component {
                         }
                         onBlur={() => this.setState({ activeInput: null })}
                         value={formData[each.name]}
+                        autoComplete="off"
                       />
                     </Form.Item>
                   );
                 })}
                 <Form.Item className="center">
-                  <Button type="primary" htmlType="submit">
+                  <Button type="primary" onClick={this._handleSubmit}>
                     Submit
                   </Button>
                 </Form.Item>
               </Form>
             </Col>
-            <Col span={8}></Col>
+            <Col span={8}>Debug mode2</Col>
           </Row>
         </Col>
         <Modal
-          title="Basic Modal"
-          visible={false}
-          // onOk={this.handleOk}
-          // onCancel={this.handleCancel}
+          title="User Details"
+          visible={showModal}
+          onOk={() => this.setState({ showModal: false })}
+          onCancel={() => this.setState({ showModal: false })}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <table>
+            <tbody>
+              {formData &&
+                showModal &&
+                fields.map(each => {
+                  return (
+                    <tr key={each.name}>
+                      <td width="50%">{each.placeholder}</td>
+                      <td>
+                        : {formData[each.name] ? formData[each.name] : "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         </Modal>
       </Row>
     );
