@@ -12,13 +12,25 @@ body {
 }
 .form {
   background: #fff;
-  padding: 30px !important;
+  padding: 20px !important;
   margin: 20px auto !important;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+}
+.debug {
+  padding: 10px;
+  background: #fff;
+  width: 80%;
+  border-radius: 4px;
+  margin: 20px auto !important;
+  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+  color: #0165af;
 }
 .center {
   text-align: center;
+}
+.align-right {
+  text-align: right;
 }
 .recordingIcon {
   /* float: right; */

@@ -1,6 +1,6 @@
 import { hot } from "react-hot-loader/root";
 import React, { Component } from "react";
-import { Button, Row, Col, Form, Input, Modal, Divider } from "antd";
+import { Button, Row, Col, Form, Input, Modal, Switch, Divider } from "antd";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
@@ -25,12 +25,14 @@ recorder.lang = "en-US";
 
 class App extends Component {
   state = {
+    recordedString: null,
     activeInput: null,
     isRecording: false,
     forceStopped: false,
     formData: [],
     inputHistory: [],
-    showModal: false
+    showModal: false,
+    debugMode: false
   };
 
   componentDidMount() {
@@ -46,7 +48,6 @@ class App extends Component {
   }
 
   _proccessCommand = recordedString => {
-    console.log("Recorded String :" + recordedString);
     let { activeInput, formData, inputHistory } = this.state;
     // check if command matched with any other custom command
     switch (recordedString) {
@@ -89,7 +90,8 @@ class App extends Component {
           let currText = formData[activeInput];
           if (this.refs[activeInput].props.value) {
             currText = currText.replace(
-              inputHistory[activeInput][inputHistory[activeInput].length - 1],
+              inputHistory[activeInput][inputHistory[activeInput].length - 1] +
+                " ",
               ""
             );
             formData[activeInput] = currText;
@@ -148,9 +150,10 @@ class App extends Component {
       if (event.results[0].isFinal) {
         let string = event.results[0][0].transcript;
         if (string.length) {
+          this.setState({ recordedString: string });
           this._proccessCommand(string);
         }
-      }
+      } else this.setState({ recordedString: null });
     };
     // Start listening again on end
     recorder.onend = () => {
@@ -176,6 +179,7 @@ class App extends Component {
     this.setState({ showModal: true });
   };
 
+  // Handle input change
   _handleChange = e => {
     const { formData } = this.state;
     this.setState({
@@ -183,14 +187,34 @@ class App extends Component {
     });
   };
 
+  // Debug mode change
+  _onDebugModeChange = () => {
+    const { debugMode } = this.state;
+    this.setState({ debugMode: !debugMode });
+  };
+
   render() {
-    let { isRecording, formData, showModal } = this.state;
+    let {
+      isRecording,
+      formData,
+      showModal,
+      debugMode,
+      recordedString
+    } = this.state;
     return (
       <Row>
         <Col span={24}>
-          <Row>
+          <Row gutter={16}>
             <Col span={8}></Col>
             <Col span={8} className="form">
+              <div className="align-right">
+                Debug Mode{" "}
+                <Switch
+                  checkedChildren="on"
+                  unCheckedChildren="off"
+                  onChange={this._onDebugModeChange}
+                />
+              </div>
               <h2>Registration Form</h2>
               <Row>
                 <Col span={2}>
@@ -218,33 +242,30 @@ class App extends Component {
                 </Col>
               </Row>
               {/* <br /> */}
-              <Form ref={this._refLoginForm}>
-                {fields.map((each, index) => {
-                  return (
-                    <Form.Item key={index}>
-                      <Input
-                        placeholder={each.placeholder}
-                        name={each.name}
-                        ref={each.name}
-                        onChange={this._handleChange}
-                        onFocus={() =>
-                          this.setState({ activeInput: each.name })
-                        }
-                        onBlur={() => this.setState({ activeInput: null })}
-                        value={formData[each.name]}
-                        autoComplete="off"
-                      />
-                    </Form.Item>
-                  );
-                })}
-                <Form.Item className="center">
-                  <Button type="primary" onClick={this._handleSubmit}>
-                    Submit
-                  </Button>
-                </Form.Item>
-              </Form>
+              <Form />
             </Col>
-            <Col span={8}>Debug mode2</Col>
+            <Col span={8}>
+              {debugMode && (
+                <div className="debug">
+                  <h3>String Received</h3>
+                  <Divider />
+                  <b>
+                    {recordedString ? (
+                      recordedString
+                    ) : (
+                      <div
+                        id="recordingAnimation"
+                        className={`${isRecording ? "show" : "hide"}`}
+                      >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    )}
+                  </b>
+                </div>
+              )}
+            </Col>
           </Row>
         </Col>
         <Modal
