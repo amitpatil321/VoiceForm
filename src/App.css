@@ -18,12 +18,13 @@ body {
   box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
 }
 .debug {
+  font-weight: bold;
   padding: 10px;
-  background: #fff;
+  /* background: #fff; */
   width: 80%;
-  border-radius: 4px;
-  margin: 20px auto !important;
-  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+  /* border-radius: 4px; */
+  /* margin: 20px auto !important; */
+  /* box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15); */
   color: #0165af;
 }
 .center {

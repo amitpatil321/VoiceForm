@@ -1,6 +1,6 @@
 import { hot } from "react-hot-loader/root";
 import React, { Component } from "react";
-import { Row, Col, Form, Modal, Switch, Divider } from "antd";
+import { Row, Col, Switch, Spin, Icon } from "antd";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
@@ -30,11 +30,12 @@ class App extends Component {
     recordedString: null,
     activeInput: null,
     isRecording: false,
+    loading: false,
     forceStopped: false,
     formData: [],
     inputHistory: [],
     showModal: false,
-    debugMode: true
+    debugMode: false
   };
 
   componentDidMount() {
@@ -48,7 +49,6 @@ class App extends Component {
     });
 
     this.refs = fields.map(each => (each.ref = React.createRef()));
-
     this.setState({ formData: inputs, inputHistory });
   }
 
@@ -56,6 +56,10 @@ class App extends Component {
     let { activeInput, formData, inputHistory } = this.state;
     // check if command matched with any other custom command
     switch (recordedString) {
+      // toggle debug mode on or off
+      case "toggle debug":
+        this._onDebugModeChange();
+        break;
       // Appends space at the end of input
       case "space":
         if (activeInput) {
@@ -161,16 +165,16 @@ class App extends Component {
       if (event.results[0].isFinal) {
         let string = event.results[0][0].transcript;
         if (string.length) {
-          this.setState({ recordedString: string });
+          this.setState({ recordedString: string, loading: true });
           this._proccessCommand(string);
         }
-      } else this.setState({ recordedString: null });
+      } else this.setState({ recordedString: null, loading: true });
     };
     // Start listening again on end
     recorder.onend = () => {
       let { forceStopped } = this.state;
       if (!forceStopped) recorder.start();
-      this.setState({ isRecording: false });
+      this.setState({ isRecording: false, loading: false });
     };
   };
 
@@ -180,7 +184,8 @@ class App extends Component {
       {
         activeInput: null,
         isRecording: false,
-        forceStopped: true
+        forceStopped: true,
+        loading: true
       },
       () => recorder.stop()
     );
@@ -212,6 +217,7 @@ class App extends Component {
   render() {
     let {
       isRecording,
+      loading,
       formData,
       showModal,
       debugMode,
@@ -226,6 +232,7 @@ class App extends Component {
               <div className="align-right">
                 Debug Mode{" "}
                 <Switch
+                  checked={debugMode ? true : false}
                   checkedChildren="on"
                   unCheckedChildren="off"
                   onChange={this._onDebugModeChange}
@@ -233,28 +240,39 @@ class App extends Component {
               </div>
               <h2>Registration Form</h2>
               <Row>
-                <Col span={2}>
-                  {!isRecording ? (
-                    <FaMicrophone
-                      className="recordingIcon on"
-                      onClick={() => this._startRecording()}
-                    />
-                  ) : (
-                    <FaMicrophoneSlash
-                      className="recordingIcon off"
-                      onClick={() => this._stopRecording()}
-                    />
-                  )}
-                </Col>
-                <Col span={22}>
-                  <div
-                    id="recordingAnimation"
-                    className={`${isRecording ? "show" : "hide"}`}
-                  >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
+                <Col span={24}>
+                  <Row>
+                    <Col span={2}>
+                      {!isRecording ? (
+                        <FaMicrophone
+                          className="recordingIcon on"
+                          onClick={() => this._startRecording()}
+                        />
+                      ) : (
+                        <FaMicrophoneSlash
+                          className="recordingIcon off"
+                          onClick={() => this._stopRecording()}
+                        />
+                      )}
+                    </Col>
+                    <Col span={8}></Col>
+                    <Col span={14} className="align-right">
+                      {loading && (
+                        <Spin
+                          indicator={
+                            <Icon
+                              type="loading"
+                              style={{ fontSize: 18 }}
+                              spin
+                            />
+                          }
+                        />
+                      )}
+                      {debugMode && recordedString && (
+                        <span className="debug">{recordedString}</span>
+                      )}
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               {/* <br /> */}
@@ -267,28 +285,7 @@ class App extends Component {
                 _handleSubmit={this._handleSubmit}
               />
             </Col>
-            <Col span={8}>
-              {debugMode && (
-                <div className="debug">
-                  <h3>String Received</h3>
-                  <Divider />
-                  <b>
-                    {recordedString ? (
-                      recordedString
-                    ) : (
-                      <div
-                        id="recordingAnimation"
-                        className={`${isRecording ? "show" : "hide"}`}
-                      >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                    )}
-                  </b>
-                </div>
-              )}
-            </Col>
+            <Col span={8}></Col>
           </Row>
         </Col>
         <FormDetailsModal
