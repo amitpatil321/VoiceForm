@@ -7,7 +7,7 @@ import { fields } from "./form.json";
 import MakeForm from "./MakeForm/MakeFormView";
 import "./App.css";
 import "antd/dist/antd.css";
-import FormDetailsModal from "./FormDetailsModal/FormDetailsModal.js";
+import FormDetailsModal from "./FormDetailsModal/FormDetailsModal";
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -34,13 +34,14 @@ class App extends Component {
     forceStopped: false,
     formData: [],
     inputHistory: [],
+    refs: [],
     showModal: false,
     debugMode: false
   };
 
   componentDidMount() {
-    let inputs = {};
-    let inputHistory = {};
+    const inputs = {};
+    const inputHistory = {};
 
     // Initialize inputs array with blank values
     fields.forEach(each => {
@@ -48,12 +49,14 @@ class App extends Component {
       inputHistory[each.name] = "";
     });
 
-    this.refs = fields.map(each => (each.ref = React.createRef()));
-    this.setState({ formData: inputs, inputHistory });
+    const refs = fields.map(each => {
+      each.ref = React.createRef();
+    });
+    this.setState({ formData: inputs, inputHistory, refs });
   }
 
   _proccessCommand = recordedString => {
-    let { activeInput, formData, inputHistory } = this.state;
+    const { activeInput, formData, inputHistory, refs } = this.state;
     // check if command matched with any other custom command
     switch (recordedString) {
       // toggle debug mode on or off
@@ -63,7 +66,7 @@ class App extends Component {
       // Appends space at the end of input
       case "space":
         if (activeInput) {
-          formData[activeInput] = formData[activeInput] + " ";
+          formData[activeInput] = `${formData[activeInput]} `;
           this.setState(prevState => ({
             ...formData,
             inputHistory: {
@@ -86,21 +89,23 @@ class App extends Component {
       // Resets form by clearing all the input fields
       case "reset":
       case "reset form":
-      case "clear form":
-        let clearFields = {};
+      case "clear form": {
+        const clearFields = {};
         fields.forEach(each => {
           clearFields[each.name] = "";
         });
         this.setState({ formData: clearFields });
         break;
+      }
       // Deletes last string added to active input
       case "undo":
         if (activeInput) {
           let currText = formData[activeInput];
           if (currText) {
             currText = currText.replace(
-              inputHistory[activeInput][inputHistory[activeInput].length - 1] +
-                " ",
+              `${
+                inputHistory[activeInput][inputHistory[activeInput].length - 1]
+              } `,
               ""
             );
             formData[activeInput] = currText;
@@ -125,28 +130,27 @@ class App extends Component {
       // process text which doesnt match with any other custom commands
       default: {
         // Map command with input triggers if any
-        let input = fields.find(each => each.triggers.includes(recordedString));
+        const input = fields.find(each =>
+          each.triggers.includes(recordedString)
+        );
         if (input) {
           // if any active input is there then fill it with value
           // set input active
-          this._findRefInput(this.refs, input.name).current.focus();
+          this._findRefInput(refs, input.name).current.focus();
           this.setState({ activeInput: input.name });
-        } else {
-          if (activeInput) {
-            const existingValue = formData[activeInput];
-            formData[activeInput] =
-              (existingValue ? existingValue : "") + recordedString + " ";
-            this.setState(prevState => ({
-              ...formData,
-              inputHistory: {
-                ...prevState.inputHistory,
-                [activeInput]: [
-                  ...prevState.inputHistory[activeInput],
-                  recordedString
-                ]
-              }
-            }));
-          }
+        } else if (activeInput) {
+          const existingValue = formData[activeInput];
+          formData[activeInput] = `${(existingValue || "") + recordedString} `;
+          this.setState(prevState => ({
+            ...formData,
+            inputHistory: {
+              ...prevState.inputHistory,
+              [activeInput]: [
+                ...prevState.inputHistory[activeInput],
+                recordedString
+              ]
+            }
+          }));
         }
       }
     }
@@ -163,7 +167,7 @@ class App extends Component {
       this.setState({ isRecording: true, forceStopped: false });
     recorder.onresult = event => {
       if (event.results[0].isFinal) {
-        let string = event.results[0][0].transcript;
+        const string = event.results[0][0].transcript;
         if (string.length) {
           this.setState({ recordedString: string, loading: true });
           this._proccessCommand(string);
@@ -172,7 +176,7 @@ class App extends Component {
     };
     // Start listening again on end
     recorder.onend = () => {
-      let { forceStopped } = this.state;
+      const { forceStopped } = this.state;
       if (!forceStopped) recorder.start();
       this.setState({ isRecording: false, loading: false });
     };
@@ -215,8 +219,9 @@ class App extends Component {
   _hideModal = () => this.setState({ showModal: false });
 
   render() {
-    let {
+    const {
       isRecording,
+      refs,
       loading,
       formData,
       showModal,
@@ -227,12 +232,12 @@ class App extends Component {
       <Row>
         <Col span={24}>
           <Row>
-            <Col span={8}></Col>
+            <Col span={8} />
             <Col span={8} className="form">
               <div className="align-right">
                 Debug Mode{" "}
                 <Switch
-                  checked={debugMode ? true : false}
+                  checked={!!debugMode}
                   checkedChildren="on"
                   unCheckedChildren="off"
                   onChange={this._onDebugModeChange}
@@ -255,7 +260,7 @@ class App extends Component {
                         />
                       )}
                     </Col>
-                    <Col span={8}></Col>
+                    <Col span={8} />
                     <Col span={14} className="align-right">
                       {loading && (
                         <Spin
@@ -279,13 +284,13 @@ class App extends Component {
               <MakeForm
                 fields={fields}
                 formData={formData}
-                refs={this.refs}
+                refs={refs}
                 _handleChange={this._handleChange}
                 _setActiveInput={this._setActiveInput}
                 _handleSubmit={this._handleSubmit}
               />
             </Col>
-            <Col span={8}></Col>
+            <Col span={8}>Help section</Col>
           </Row>
         </Col>
         <FormDetailsModal

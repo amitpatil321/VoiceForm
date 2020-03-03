@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
+import PropTypes from "prop-types";
 
 const MakeForm = ({
   fields,
@@ -34,6 +35,24 @@ const MakeForm = ({
       </Form.Item>
     </Form>
   );
+};
+
+MakeForm.propTypes = {
+  fields: PropTypes.instanceOf(PropTypes.array),
+  formData: PropTypes.instanceOf(PropTypes.array),
+  refs: PropTypes.instanceOf(PropTypes.array),
+  _handleChange: PropTypes.func,
+  _setActiveInput: PropTypes.func,
+  _handleSubmit: PropTypes.func
+};
+
+MakeForm.defaultProps = {
+  fields: [],
+  formData: [],
+  refs: [],
+  _handleChange: () => {},
+  _setActiveInput: () => {},
+  _handleSubmit: () => {}
 };
 
 export default MakeForm;
