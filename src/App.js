@@ -1,11 +1,13 @@
 import { hot } from "react-hot-loader/root";
 import React, { Component } from "react";
-import { Button, Row, Col, Form, Input, Modal, Switch, Divider } from "antd";
+import { Row, Col, Form, Modal, Switch, Divider } from "antd";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
+import MakeForm from "./MakeForm/MakeFormView";
 import "./App.css";
 import "antd/dist/antd.css";
+import FormDetailsModal from "./FormDetailsModal/FormDetailsModal.js";
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -32,19 +34,22 @@ class App extends Component {
     formData: [],
     inputHistory: [],
     showModal: false,
-    debugMode: false
+    debugMode: true
   };
 
   componentDidMount() {
     let inputs = {};
     let inputHistory = {};
+
+    // Initialize inputs array with blank values
     fields.forEach(each => {
       inputs[each.name] = "";
       inputHistory[each.name] = "";
     });
-    this.setState({ formData: inputs, inputHistory }, () =>
-      console.log(this.state)
-    );
+
+    this.refs = fields.map(each => (each.ref = React.createRef()));
+
+    this.setState({ formData: inputs, inputHistory });
   }
 
   _proccessCommand = recordedString => {
@@ -54,11 +59,9 @@ class App extends Component {
       // Appends space at the end of input
       case "space":
         if (activeInput) {
-          const currValue = this.refs[activeInput].props.value + " ";
-          formData[activeInput] = currValue;
+          formData[activeInput] = formData[activeInput] + " ";
           this.setState(prevState => ({
             ...formData,
-            activeInput: activeInput,
             inputHistory: {
               ...prevState.inputHistory,
               [activeInput]: [...prevState.inputHistory[activeInput], " "]
@@ -66,6 +69,7 @@ class App extends Component {
           }));
         }
         break;
+      // Clears currently active input element
       case "clear":
       case "clear input":
       case "clear field":
@@ -75,6 +79,7 @@ class App extends Component {
           this.setState({ ...formData });
         }
         break;
+      // Resets form by clearing all the input fields
       case "reset":
       case "reset form":
       case "clear form":
@@ -84,11 +89,11 @@ class App extends Component {
         });
         this.setState({ formData: clearFields });
         break;
+      // Deletes last string added to active input
       case "undo":
-        // Remove last string that was added to active input
         if (activeInput) {
           let currText = formData[activeInput];
-          if (this.refs[activeInput].props.value) {
+          if (currText) {
             currText = currText.replace(
               inputHistory[activeInput][inputHistory[activeInput].length - 1] +
                 " ",
@@ -102,32 +107,33 @@ class App extends Component {
           }
         }
         break;
+      // Submits form
       case "go":
       case "submit":
       case "submit form":
         this._handleSubmit();
         break;
+      // Stops recording/listening to user commands
       case "stop recording":
       case "stop listening":
         this._stopRecording();
         break;
+      // process text which doesnt match with any other custom commands
       default: {
         // Map command with input triggers if any
         let input = fields.find(each => each.triggers.includes(recordedString));
         if (input) {
           // if any active input is there then fill it with value
           // set input active
-          this.refs[input.name].focus();
+          this._findRefInput(this.refs, input.name).current.focus();
           this.setState({ activeInput: input.name });
         } else {
           if (activeInput) {
-            const existingValue = this.refs[activeInput].props.value;
+            const existingValue = formData[activeInput];
             formData[activeInput] =
               (existingValue ? existingValue : "") + recordedString + " ";
-            // console.log(this.state);
             this.setState(prevState => ({
               ...formData,
-              activeInput: activeInput,
               inputHistory: {
                 ...prevState.inputHistory,
                 [activeInput]: [
@@ -142,6 +148,11 @@ class App extends Component {
     }
   };
 
+  // Find referened input
+  _findRefInput = (refArray, inputName) =>
+    refArray.find(each => each.current.props.name === inputName);
+
+  // Start audio recording
   _startRecording = () => {
     recorder.start();
     recorder.onstart = () =>
@@ -163,6 +174,7 @@ class App extends Component {
     };
   };
 
+  // stop recording
   _stopRecording = () => {
     this.setState(
       {
@@ -175,9 +187,7 @@ class App extends Component {
   };
 
   // Handle submit button
-  _handleSubmit = e => {
-    this.setState({ showModal: true });
-  };
+  _handleSubmit = e => this.setState({ showModal: true });
 
   // Handle input change
   _handleChange = e => {
@@ -193,6 +203,12 @@ class App extends Component {
     this.setState({ debugMode: !debugMode });
   };
 
+  // set currently ative input
+  _setActiveInput = activeInput => this.setState({ activeInput });
+
+  // toggle modal
+  _hideModal = () => this.setState({ showModal: false });
+
   render() {
     let {
       isRecording,
@@ -204,7 +220,7 @@ class App extends Component {
     return (
       <Row>
         <Col span={24}>
-          <Row gutter={16}>
+          <Row>
             <Col span={8}></Col>
             <Col span={8} className="form">
               <div className="align-right">
@@ -242,7 +258,14 @@ class App extends Component {
                 </Col>
               </Row>
               {/* <br /> */}
-              <Form />
+              <MakeForm
+                fields={fields}
+                formData={formData}
+                refs={this.refs}
+                _handleChange={this._handleChange}
+                _setActiveInput={this._setActiveInput}
+                _handleSubmit={this._handleSubmit}
+              />
             </Col>
             <Col span={8}>
               {debugMode && (
@@ -268,29 +291,12 @@ class App extends Component {
             </Col>
           </Row>
         </Col>
-        <Modal
-          title="User Details"
-          visible={showModal}
-          onOk={() => this.setState({ showModal: false })}
-          onCancel={() => this.setState({ showModal: false })}
-        >
-          <table>
-            <tbody>
-              {formData &&
-                showModal &&
-                fields.map(each => {
-                  return (
-                    <tr key={each.name}>
-                      <td width="50%">{each.placeholder}</td>
-                      <td>
-                        : {formData[each.name] ? formData[each.name] : "-"}
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </Modal>
+        <FormDetailsModal
+          showModal={showModal}
+          formData={formData}
+          fields={fields}
+          _hideModal={this._hideModal}
+        />
       </Row>
     );
   }
