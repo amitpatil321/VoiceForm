@@ -1,22 +1,39 @@
 body {
   font-family: "Poppins" !important;
-  background-image: -webkit-radial-gradient(
-      80% 10%,
-      circle,
-      rgb(27, 186, 135),
-      transparent
-    ),
-    -webkit-radial-gradient(80% 50%, circle, rgb(58, 164, 178), transparent),
-    -webkit-radial-gradient(20% 80%, 40em 40em, rgb(14, 4, 56), transparent),
-    -webkit-radial-gradient(10% 10%, circle, rgb(68, 242, 215), transparent);
+  background: #ff8008; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #ff8008,
+    #ffc837
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ff8008,
+    #ffc837
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
-.form {
+.content {
   background: #fff;
   padding: 20px !important;
   margin: 20px auto !important;
   border-radius: 4px;
   box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
 }
+.help {
+  padding: 10px;
+  font-size: 12px !important;
+  background: #fff;
+  margin: 20px auto !important;
+  border-radius: 4px;
+  /* box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15); */
+}
+.help table {
+  font-size: 12px;
+}
+.help table td {
+  padding: 5px !important;
+}
+
 .debug {
   font-weight: bold;
   padding: 10px;

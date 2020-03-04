@@ -5,9 +5,11 @@ import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
 import MakeForm from "./MakeForm/MakeFormView";
+import Help from "./Help/Help";
+import FormDetailsModal from "./FormDetailsModal/FormDetailsModal";
+
 import "./App.css";
 import "antd/dist/antd.css";
-import FormDetailsModal from "./FormDetailsModal/FormDetailsModal";
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -16,14 +18,6 @@ const recorder = new SpeechRecognition();
 recorder.continous = true;
 recorder.interimResults = true;
 recorder.lang = "en-US";
-
-/* TODO :
-1) Add action to clear form - DONE
-2) Clear perticular field only - DONE
-3) Append new string with existing input text - DONE
-4) Add undo feature - DONE
-5) keybord delete button isnt working
- */
 
 class App extends Component {
   state = {
@@ -231,7 +225,7 @@ class App extends Component {
         <Col span={24}>
           <Row>
             <Col span={8} />
-            <Col span={8} className="form">
+            <Col span={8} className="content">
               <div className="align-right">
                 Debug Mode{" "}
                 <Switch
@@ -278,7 +272,6 @@ class App extends Component {
                   </Row>
                 </Col>
               </Row>
-              {/* <br /> */}
               <MakeForm
                 fields={fields}
                 formData={formData}
@@ -288,7 +281,9 @@ class App extends Component {
                 _handleSubmit={this._handleSubmit}
               />
             </Col>
-            <Col span={8}>Help section</Col>
+            <Col span={8}>
+              <Help />
+            </Col>
           </Row>
         </Col>
         <FormDetailsModal
