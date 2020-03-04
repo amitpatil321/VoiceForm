@@ -14,7 +14,7 @@ const MakeForm = ({
     <Form>
       {fields.map((each, index) => {
         return (
-          <Form.Item key={index}>
+          <Form.Item key={each.name}>
             <Input
               placeholder={each.placeholder}
               name={each.name}
@@ -38,9 +38,15 @@ const MakeForm = ({
 };
 
 MakeForm.propTypes = {
-  fields: PropTypes.instanceOf(PropTypes.array),
-  formData: PropTypes.instanceOf(PropTypes.array),
-  refs: PropTypes.instanceOf(PropTypes.array),
+  fields: PropTypes.arrayOf(PropTypes.object),
+  formData: PropTypes.shape({
+    first_name: PropTypes.string,
+    last_name: PropTypes.string,
+    email: PropTypes.string,
+    company: PropTypes.string,
+    job_title: PropTypes.string
+  }),
+  refs: PropTypes.arrayOf(PropTypes.object),
   _handleChange: PropTypes.func,
   _setActiveInput: PropTypes.func,
   _handleSubmit: PropTypes.func

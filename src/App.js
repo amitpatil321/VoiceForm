@@ -32,7 +32,7 @@ class App extends Component {
     isRecording: false,
     loading: false,
     forceStopped: false,
-    formData: [],
+    formData: {},
     inputHistory: [],
     refs: [],
     showModal: false,
@@ -49,9 +49,7 @@ class App extends Component {
       inputHistory[each.name] = "";
     });
 
-    const refs = fields.map(each => {
-      each.ref = React.createRef();
-    });
+    const refs = fields.map(each => React.createRef());
     this.setState({ formData: inputs, inputHistory, refs });
   }
 

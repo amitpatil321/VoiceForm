@@ -35,8 +35,14 @@ const FormDetailsModal = ({ showModal, formData, fields, _hideModal }) => {
 
 FormDetailsModal.propTypes = {
   showModal: PropTypes.bool,
-  formData: PropTypes.instanceOf(PropTypes.array),
-  fields: PropTypes.instanceOf(PropTypes.array),
+  fields: PropTypes.arrayOf(PropTypes.object),
+  formData: PropTypes.shape({
+    first_name: PropTypes.string,
+    last_name: PropTypes.string,
+    email: PropTypes.string,
+    company: PropTypes.string,
+    job_title: PropTypes.string
+  }),
   _hideModal: PropTypes.func
 };
 
