@@ -1,6 +1,6 @@
 import { hot } from "react-hot-loader/root";
 import React, { Component } from "react";
-import { Row, Col, Switch, Spin, Icon } from "antd";
+import { Row, Col, Switch, Spin, Icon, Alert } from "antd";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 import { fields } from "./form.json";
@@ -30,7 +30,8 @@ class App extends Component {
     inputHistory: [],
     refs: [],
     showModal: false,
-    debugMode: false
+    debugMode: false,
+    error: null
   };
 
   componentDidMount() {
@@ -172,6 +173,15 @@ class App extends Component {
       if (!forceStopped) recorder.start();
       this.setState({ isRecording: false, loading: false });
     };
+
+    // Handle user declined audio permissions error
+    recorder.onerror = err => {
+      if (err.error === "not-allowed")
+        this.setState({
+          error: "Please allow Microphone access"
+        });
+      else this.setState({ error: "Unable to start microphone" });
+    };
   };
 
   // stop recording
@@ -218,7 +228,8 @@ class App extends Component {
       formData,
       showModal,
       debugMode,
-      recordedString
+      recordedString,
+      error
     } = this.state;
     return (
       <Row>
@@ -236,6 +247,13 @@ class App extends Component {
                 />
               </div>
               <h2>Registration Form</h2>
+              {error && (
+                <>
+                  <Alert type="error" message={error} showIcon />
+                  <br />
+                </>
+              )}
+
               <Row>
                 <Col span={24}>
                   <Row>
