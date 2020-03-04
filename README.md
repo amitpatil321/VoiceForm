@@ -6,6 +6,9 @@ Click on audio icon to start speech recognition, You can activate/focus any inpu
 
 There are few custom commands to operate this form, You can find those commands in help section.
 
+## Demo
+![voiceform](public/voiceform.gif)
+
 ## How to Run
 1) git clone
 2) npm install
