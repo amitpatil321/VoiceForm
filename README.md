@@ -1,6 +1,6 @@
 Simple HTML form which can be operated using voice only commands using HTML5 SpeechRecognition api.
 
-## How It worlks
+## How It works
 
 Click on audio icon to start speech recognition, You can activate/focus any input based on the triggers specified in the [form.json](https://github.com/amitpatil321/VoiceForm/blob/master/src/form.json) file. 
 
