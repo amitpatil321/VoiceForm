@@ -1,15 +1,15 @@
 body {
   font-family: "Poppins" !important;
-  background: #ff8008; /* fallback for old browsers */
+
   background: -webkit-linear-gradient(
     to right,
-    #ff8008,
-    #ffc837
+    #96c93d,
+    #00b09b
   ); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to right,
-    #ff8008,
-    #ffc837
+    #96c93d,
+    #00b09b
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 .content {
