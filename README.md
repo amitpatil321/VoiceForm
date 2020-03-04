@@ -6,7 +6,8 @@ Click on audio icon to start speech recognition, You can activate/focus any inpu
 
 There are few custom commands to operate this form
 
-** Custom Commands **
+### Custom Commands
+
 | Command | Description |
 |--|--|
 | `toggle debug` | Turns on/off debug mode |
