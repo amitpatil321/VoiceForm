@@ -51,6 +51,7 @@ class App extends Component {
   _proccessCommand = recordedString => {
     const { activeInput, formData, inputHistory, refs } = this.state;
     // check if command matched with any other custom command
+
     switch (recordedString) {
       // toggle debug mode on or off
       case "toggle debug":
@@ -133,6 +134,11 @@ class App extends Component {
           this.setState({ activeInput: input.name });
         } else if (activeInput) {
           const existingValue = formData[activeInput];
+          if (activeInput === "email") {
+            // eslint-disable-next-line no-param-reassign
+            recordedString = recordedString.toLowerCase().replace(/\s/g, "");
+          }
+
           formData[activeInput] = `${(existingValue || "") + recordedString} `;
           this.setState(prevState => ({
             ...formData,
@@ -180,7 +186,6 @@ class App extends Component {
         this.setState({
           error: "Please allow Microphone access"
         });
-      else this.setState({ error: "Unable to start microphone" });
     };
   };
 
