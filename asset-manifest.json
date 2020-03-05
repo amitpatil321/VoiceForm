@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/VoiceForm/static/css/main.b69e011f.chunk.css",
-    "main.js": "/VoiceForm/static/js/main.409d2bf2.chunk.js",
-    "main.js.map": "/VoiceForm/static/js/main.409d2bf2.chunk.js.map",
+    "main.js": "/VoiceForm/static/js/main.a040bd15.chunk.js",
+    "main.js.map": "/VoiceForm/static/js/main.a040bd15.chunk.js.map",
     "runtime-main.js": "/VoiceForm/static/js/runtime-main.38392f2d.js",
     "runtime-main.js.map": "/VoiceForm/static/js/runtime-main.38392f2d.js.map",
     "static/css/2.5bc4965f.chunk.css": "/VoiceForm/static/css/2.5bc4965f.chunk.css",
     "static/js/2.bd321ede.chunk.js": "/VoiceForm/static/js/2.bd321ede.chunk.js",
     "static/js/2.bd321ede.chunk.js.map": "/VoiceForm/static/js/2.bd321ede.chunk.js.map",
     "index.html": "/VoiceForm/index.html",
-    "precache-manifest.7c6f8ea5a56f545246e99f4b61dc6c84.js": "/VoiceForm/precache-manifest.7c6f8ea5a56f545246e99f4b61dc6c84.js",
+    "precache-manifest.819523ffda1d1480ea2c5376054cf4ae.js": "/VoiceForm/precache-manifest.819523ffda1d1480ea2c5376054cf4ae.js",
     "service-worker.js": "/VoiceForm/service-worker.js",
     "static/css/2.5bc4965f.chunk.css.map": "/VoiceForm/static/css/2.5bc4965f.chunk.css.map",
     "static/css/main.b69e011f.chunk.css.map": "/VoiceForm/static/css/main.b69e011f.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.5bc4965f.chunk.css",
     "static/js/2.bd321ede.chunk.js",
     "static/css/main.b69e011f.chunk.css",
-    "static/js/main.409d2bf2.chunk.js"
+    "static/js/main.a040bd15.chunk.js"
   ]
 }

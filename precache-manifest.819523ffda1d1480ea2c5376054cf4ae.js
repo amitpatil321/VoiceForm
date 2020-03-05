@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1c8ee307c788d98b844619615e4f3a7d",
+    "revision": "149aa032c5f04f8881af1f26f5b82580",
     "url": "/VoiceForm/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/VoiceForm/static/css/2.5bc4965f.chunk.css"
   },
   {
-    "revision": "59c2232e293becfc6f4e",
+    "revision": "2122fb0f673847bb8a23",
     "url": "/VoiceForm/static/css/main.b69e011f.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/VoiceForm/static/js/2.bd321ede.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "59c2232e293becfc6f4e",
-    "url": "/VoiceForm/static/js/main.409d2bf2.chunk.js"
+    "revision": "2122fb0f673847bb8a23",
+    "url": "/VoiceForm/static/js/main.a040bd15.chunk.js"
   },
   {
     "revision": "174fc6f2fe1b7fc5c4b7",
